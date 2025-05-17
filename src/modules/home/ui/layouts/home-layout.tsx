@@ -12,10 +12,12 @@ export const HomeLayout = ({ children }: LayoutProps) => {
       <div className={"w-full"}>
         <HomeNavbar />
         <div className="flex min-h-screen pt-[4rem]">
-          <HomeSiderbar/>
+          <HomeSiderbar />
           <div className="flex-1 overflow-y-auto">{children}</div>
-          </div>
+        </div>
       </div>
     </SidebarProvider>
   );
 };
+
+// "dev:server": "concurrently \"npm run dev\" \"npm run dev:webhook\"",
