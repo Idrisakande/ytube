@@ -1,7 +1,8 @@
 import { db } from "@/db"
-import { videos } from "@/db/schema"
+import { comments, users, videoReactions, videos, videoViews } from "@/db/schema"
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init"
-import { eq, and, or, lt, desc } from "drizzle-orm"
+import { TRPCError } from "@trpc/server"
+import { eq, and, or, lt, desc, getTableColumns } from "drizzle-orm"
 import { z } from "zod"
 
 export const studioRouter = createTRPCRouter({
@@ -14,7 +15,19 @@ export const studioRouter = createTRPCRouter({
     })).query(async ({ ctx, input }) => {
         const { limit, cursor } = input
         const { id: userId } = ctx.user
-        const data = await db.select().from(videos)
+        const rows = await db
+            .select({
+                ...getTableColumns(videos),
+                user: users,
+                viewCount: db.$count(videoViews, eq(videoViews.videoId, videos.id)),
+                likeCount: db.$count(videoReactions, and(
+                    eq(videoReactions.videoId, videos.id),
+                    eq(videoReactions.type, 'like'),
+                )),
+                commentCount: db.$count(comments, eq(comments.videoId, videos.id)),
+            })
+            .from(videos)
+            .innerJoin(users, eq(users.id, videos.userId))
             .where(and(
                 eq(videos.userId, userId),
                 cursor
@@ -30,31 +43,56 @@ export const studioRouter = createTRPCRouter({
             .orderBy(
                 desc(videos.updatedAt),
                 desc(videos.id))
-            // add a limit to the query further down
+            // add limit + 1 to query further down if there is more data
             .limit(limit + 1)
+            // check if there is more data
+            const hasMore = rows.length > limit;
+            // take out the last item if there is more data
+            const data = hasMore ? rows.slice(0, -1) : rows
+            // set next cursor to the last item if there is more data
+            const lastItem = data[data.length - 1]
+            const nextCursor = hasMore ? { id: lastItem.id, updatedAt: lastItem.updatedAt } : null
 
-        const hasMore = data.length > limit
-        // // if there are more than the limit, we slice the data
-        if (hasMore) {
-            data.pop() // remove the last item to keep the limit
+            return { data, nextCursor }
+    }),
+    // This procedure is used to get a single video by id
+    getOne: protectedProcedure.input(z.object({
+        id: z.string().uuid()
+    })).query(async ({ ctx, input }) => {
+        const { id: userId } = ctx.user
+        const [video] = await db.select().from(videos)
+            .where(and(
+                eq(videos.id, input.id),
+                eq(videos.userId, userId)
+            ))
+        // .limit(1)
+        // .then(res => res[0])
+        if (!video) {
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Video not found"
+            })
         }
-        // if there is no data, return an empty array
-        if (data.length === 0) {
-            return {
-                data: [],
-                nextCursor: null
-            }
-        }
-
-        // get the last item to use as the next cursor
-        const nextCursor = {
-            id: data[data.length - 1].id,
-            updatedAt: data[data.length - 1].updatedAt
-        }
-        // return the data and the next cursor
-        return {
-            data,
-            nextCursor: hasMore ? nextCursor : null
-        }
+        return video
     })
 })
+
+
+// import Mux from '@mux/mux-node';
+// import MuxUploader from '@mux/mux-uploader-react';
+
+// const client = new Mux({
+//   tokenId: process.env['MUX_TOKEN_ID'],
+//   tokenSecret: process.env['MUX_TOKEN_SECRET'],
+// });
+
+// export default async function Page() {
+//   const directUpload = await client.video.uploads.create({
+//     cors_origin: '*',
+//     new_asset_settings: {
+//       playback_policy: ['public'],
+//     },
+//   });
+
+//   return <MuxUploader endpoint={directUpload.url} />;
+// }

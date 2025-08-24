@@ -11,9 +11,12 @@ export const HomeNavbar = () => {
         {/** Menu */}
         <div className="flex items-center flex-shrink-0">
           <SidebarTrigger />
-          <Link href={"/"}>
+          <Link prefetch  href={"/"} className="hidden md:block">
             <div className="p-4 flex items-center gap-1">
-              <Image src={"/globe.svg"} alt="logo" width={30} height={30} />
+              {/* <Image src={"/logo.svg"} alt="logo" width={30} height={30} /> */}
+              <div className="relative overflow-hidden flex h-5 w-7.5">
+                <Image src={"/logo.svg"} alt="logo" fill />
+              </div>
               <span className="text-xl font-semibold tracking-tight">
                 YTube
               </span>

@@ -20,12 +20,10 @@ export const CategoriesSection = ({ categoryId }: CategoriesSectionProps) => {
 };
 
 const CategoriesSkeleton = () => {
-  return <FilterCarousel isLoading filters={[]} onFilterChange={() => {}} />;
+  return <FilterCarousel isLoading filters={[]} onFilterChange={() => { }} />;
 };
 
 const CategoriesSectionSuspense = ({ categoryId }: CategoriesSectionProps) => {
-  // console.log(categoryId);
-  
   const router = useRouter();
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
 
@@ -51,10 +49,6 @@ const CategoriesSectionSuspense = ({ categoryId }: CategoriesSectionProps) => {
     // window.history.pushState({}, "", url.toString());
     router.push(url.toString(), { scroll: false });
   };
-
-  // return (
-  //   <div>gsdjhsdghghsdh</div>
-  // );
   return (
     <FilterCarousel
       filter={categoryId}

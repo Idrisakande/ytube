@@ -5,16 +5,15 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { rateLimit } from '@/lib/ratelimit';
+// import { rateLimit } from '@/lib/ratelimit';
 
 export const createTRPCContext = cache(async () => {
-    const {userId} = await auth()
+    const { userId } = await auth()
     return {
         // Add any context you need here
         clerkUserId: userId
     };
 })
-
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>
 
 export const t = initTRPC.context<Context>().create({
@@ -41,15 +40,14 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(opts) 
     // also return user
     const [user] = await db.select().from(users).where(eq(users.clerkId, ctx.clerkUserId)).limit(1)
     if (!user) {
-        throw new TRPCError({code: "UNAUTHORIZED", message: "User not found"})
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "User not found" })
     }
-    const {success} = await rateLimit.limit(user.id)
-    if (!success) {
-        throw new TRPCError({code: "TOO_MANY_REQUESTS", message: "You have exceeded the rate limit"})
-    }
+    // const { success } = await rateLimit.limit(user.id)
+    // if (!success) {
+    //     throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "You have exceeded the rate limit" })
+    // }
     // if user is found, return the user
     // and continue to the next middleware or procedure
-
     return opts.next({
         ctx: {
             ...ctx,

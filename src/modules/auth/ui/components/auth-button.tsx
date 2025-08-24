@@ -9,18 +9,10 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import { ClapperboardIcon, UserCircleIcon } from "lucide-react";
+import { ClapperboardIcon, UserCircleIcon, UserIcon } from "lucide-react";
 
 export const AuthButton = () => {
   const { isLoaded, isSignedIn } = useAuth();
-
-  // if (!isLoaded) {
-  //   return (
-  //     <div className="flex items-center space-x-2">
-  //       <Skeleton className="rounded-full size-7"/>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -45,6 +37,11 @@ export const AuthButton = () => {
         <SignedIn>
           <UserButton>
             <UserButton.MenuItems>
+              <UserButton.Link
+                href={`/users/current`}
+                label={`My profile`}
+                labelIcon={<UserIcon className="size-4" />}
+              />
               <UserButton.Link
                 href={`/studio`}
                 label={`Studio`}

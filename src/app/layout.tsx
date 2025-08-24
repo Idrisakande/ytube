@@ -10,6 +10,9 @@ import {
   // UserButton,
 } from "@clerk/nextjs";
 import { TrpcProvider } from "@/trpc/client";
+import { Toaster } from "@/components/ui/sonner";
+import ReduxStoreProvider from "@/lib/redux/redux-provider";
+// import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -29,7 +32,15 @@ export default function RootLayout({
     <ClerkProvider afterSignOutUrl={"/"}>
       <html lang="en">
         <body className={inter.className}>
-          <TrpcProvider>{children}</TrpcProvider>
+          <ReduxStoreProvider>
+            <TrpcProvider>
+              <Toaster />
+              {children}
+            </TrpcProvider>
+          </ReduxStoreProvider>
+          {/* <SignedIn>
+            <UserButton />
+          </SignedIn> */}
         </body>
       </html>
     </ClerkProvider>

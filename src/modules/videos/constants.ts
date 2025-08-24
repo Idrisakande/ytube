@@ -1,0 +1,1 @@
+export const VIDEO_THUMBNAIL_URL_FALLBACK = "/placeholder.svg";

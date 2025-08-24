@@ -1,15 +1,15 @@
-// import { DEFAULT_LIMIT } from "@/constant";
-// import { StudioView } from "@/modules/studio/ui/views/studio-view";
-import { HydrateClient } from "@/trpc/server";
+import { DEFAULT_LIMIT } from "@/constant";
+import { StudioView } from "@/modules/studio/ui/views/studio-view";
+import { HydrateClient, trpc } from "@/trpc/server";
+
+export const dynamic = "force-dynamic"
 
 const Page = async () => {
-  // void trpc.studio.getMany.prefetchInfinite({ limit: DEFAULT_LIMIT });
-  // void trpc.videos.create.prefetch();
+  void trpc.studio.getMany.prefetchInfinite({ limit: DEFAULT_LIMIT });
 
   return (
     <HydrateClient>
-      asgsdfhgjh
-      {/* <StudioView /> */}
+      <StudioView />
     </HydrateClient>
   );
 };

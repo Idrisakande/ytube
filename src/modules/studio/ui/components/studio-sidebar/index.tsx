@@ -13,6 +13,7 @@ import Link from "next/link";
 import { LogOutIcon, VideoIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { StudioSidebarHeader } from "@/modules/studio/ui/components/studio-sidebar/studio-sidebar-header";
+import Image from "next/image";
 
 export const StudioSiderbar = () => {
   const pathname = usePathname();
@@ -20,6 +21,19 @@ export const StudioSiderbar = () => {
   return (
     <Sidebar collapsible="icon" className="pt-16 z-40 ">
       <SidebarContent className="bg-background">
+        <div className="md:hidden">
+          <Link prefetch href={"/"}>
+            <div className="p-4 flex items-center gap-1">
+              {/* <Image src={"/logo.svg"} alt="logo" width={30} height={30} /> */}
+              <div className="relative overflow-hidden flex h-5 w-7.5">
+                <Image src={"/logo.svg"} alt="logo" fill />
+              </div>
+              <span className="text-xl font-semibold tracking-tight">
+                YTube
+              </span>
+            </div>
+          </Link>
+        </div>
         <SidebarGroup>
           <SidebarMenu>
             <StudioSidebarHeader />
@@ -29,7 +43,7 @@ export const StudioSiderbar = () => {
                 asChild
                 isActive={pathname === `/studio`}
               >
-                <Link href={"/studio"}>
+                <Link prefetch href={"/studio"}>
                   <VideoIcon className="size-5" />
                   <span className="text-sm">Content</span>
                 </Link>
@@ -38,7 +52,7 @@ export const StudioSiderbar = () => {
             <Separator />
             <SidebarMenuItem>
               <SidebarMenuButton tooltip={"Exit studio"} asChild>
-                <Link href={"/"}>
+                <Link prefetch href={"/"}>
                   <LogOutIcon className="size-5" />
                   <span className="text-sm">Exit studio</span>
                 </Link>

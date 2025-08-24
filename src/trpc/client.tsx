@@ -8,6 +8,7 @@ import { useState } from "react";
 import superjson from "superjson";
 import { makeQueryClient } from "@/trpc/query-client";
 import type { AppRouter } from "@/trpc/routers/_app";
+import { APP_URL } from "@/constant";
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -26,9 +27,8 @@ function getQueryClient() {
 function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
-    // TODO: Modify this to use the correct URL for your production environment
-    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-    return `http://localhost:3000}`;
+    //Crucial to modify in .env to production domain (including protocol)
+    return APP_URL;
     // if (typeof window === "undefined") {
     //     return "http://localhost:3000"
     // }

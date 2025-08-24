@@ -1,42 +1,44 @@
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { HistoryIcon, ListVideoIcon, ThumbsUpIcon } from "lucide-react";
-import Link from "next/link";
 import { useAuth, useClerk } from "@clerk/nextjs";
+import { FlameIcon, HomeIcon, PlaySquareIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const item = [
   {
-    title: "History",
-    url: "/playlists/history",
-    icon: HistoryIcon,
-    auth: true,
+    title: "Home",
+    url: "/",
+    icon: HomeIcon,
   },
   {
-    title: "Liked videos",
-    url: "/playlists/liked",
-    icon: ThumbsUpIcon,
-    auth: true,
+    title: "Trending",
+    url: "/feed/trending",
+    icon: FlameIcon,
   },
   {
-    title: "All playlists",
-    url: "/playlists",
-    icon: ListVideoIcon,
+    title: "Subscriptions",
+    url: "/feed/subscribed",
+    icon: PlaySquareIcon,
     auth: true,
   },
 ];
 
-export const PersonalSection = () => {
+export const MainItems = () => {
   const clerk = useClerk();
+  // const { userId } = clerk.user;
   const { isSignedIn } = useAuth();
+  const pathname = usePathname()
+  // const { signIn } = useSignIn();
+  // const isAuth = !!userId;
+  // const filteredItems = item.filter((i) => {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>You</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {item.map((i) => (
@@ -44,15 +46,19 @@ export const PersonalSection = () => {
               <SidebarMenuButton
                 tooltip={i.title}
                 asChild
-                isActive={false}
+                isActive={pathname === i.url}
                 onClick={(event) => {
                   if (!isSignedIn && i.auth) {
                     event.preventDefault();
                     return clerk.openSignIn();
+                    // signIn?.redirectToSignIn({
+                    //   redirectUrl: "/",
+                    // });
                   }
                 }}
               >
-                <Link href={i.url} className="flex items-center gap-4">
+                {/* Link to the main */}
+                <Link prefetch href={i.url} className="flex items-center gap-4">
                   <i.icon />
                   <span className="text-sm">{i.title}</span>
                 </Link>
