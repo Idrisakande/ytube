@@ -1,3 +1,5 @@
+'use client'
+
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -5,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,6 +40,7 @@ export const SubscriptionsItems = () => {
   }, {
     getNextPageParam: (lastPage) => lastPage.nextCursor
   })
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
 
@@ -51,8 +55,13 @@ export const SubscriptionsItems = () => {
                 tooltip={subscription.user.name}
                 asChild
                 isActive={pathname === `/users/${subscription.user.id}`}
+                onClick={() => {
+                  if (isMobile) {
+                    setOpenMobile(false);
+                  }
+                }}
               >
-                <Link prefetch  href={`/users/${subscription.user.id}`} className="flex items-center gap-4">
+                <Link prefetch href={`/users/${subscription.user.id}`} className="flex items-center gap-4">
                   <UserAvatar size={`xs`} imageUrl={subscription.user.imageUrl} name={subscription.user.name} />
                   <span className="text-sm">{subscription.user.name}</span>
                 </Link>
@@ -64,8 +73,13 @@ export const SubscriptionsItems = () => {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === `/subscriptions`}
+                onClick={() => {
+                  if (isMobile) {
+                    setOpenMobile(false);
+                  }
+                }}
               >
-                <Link prefetch  href={`/subscriptions`} className="flex items-center gap-4">
+                <Link prefetch href={`/subscriptions`} className="flex items-center gap-4">
                   <ListIcon className="size-4" />
                   <span className="text-sm">All subscriptions</span>
                 </Link>

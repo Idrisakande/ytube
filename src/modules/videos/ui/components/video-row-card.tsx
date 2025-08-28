@@ -38,6 +38,7 @@ const thumbnailVariants = cva("relative flex-none", {
 interface VideoRowCardProps extends VariantProps<typeof videoRowCardVariants> {
     data: VideoGetManyOutput[`data`][number]
     onRemove?: () => void
+    removeIsPending?: boolean
 }
 
 export const VideoRowCardSkeleton = ({ size = `default` }: VariantProps<typeof videoRowCardVariants>) => {
@@ -75,7 +76,7 @@ export const VideoRowCardSkeleton = ({ size = `default` }: VariantProps<typeof v
         </div>
     )
 }
-export const VideoRowCard = ({ data, onRemove, size = `default` }: VideoRowCardProps) => {
+export const VideoRowCard = ({ data, onRemove, size = `default`, removeIsPending }: VideoRowCardProps) => {
     const compactViews = useMemo(() => {
         return Intl.NumberFormat(`en`, {
             notation: "compact"
@@ -89,7 +90,7 @@ export const VideoRowCard = ({ data, onRemove, size = `default` }: VideoRowCardP
 
     return (
         <div className={videoRowCardVariants({ size })}>
-            <Link prefetch  href={`/videos/${data.id}`} className={thumbnailVariants({ size })}>
+            <Link prefetch href={`/videos/${data.id}`} className={thumbnailVariants({ size })}>
                 <VideoThumbnail
                     thumbnailUrl={data.thumbnailUrl}
                     previewUrl={data.previewUrl}
@@ -100,7 +101,7 @@ export const VideoRowCard = ({ data, onRemove, size = `default` }: VideoRowCardP
             </Link>
             <div className="flex-1 min-w-0">
                 <div className="flex justify-between gap-x-2">
-                    <Link prefetch  href={`/videos/${data.id}`} className="flex-1 min-w-0">
+                    <Link prefetch href={`/videos/${data.id}`} className="flex-1 min-w-0">
                         <h3 className={cn(
                             `font-medium line-clamp-1`,
                             size === `compact` ? `text-sm` : `text-base`)}>
@@ -108,7 +109,7 @@ export const VideoRowCard = ({ data, onRemove, size = `default` }: VideoRowCardP
                         </h3>
                         {size === `default` && (
                             <p className="text-sm text-muted-foreground mt-0.5" >
-                                {compactViews} views • {compactLikes} likes
+                                {compactViews} views &bull; {compactLikes} likes
                             </p>
                         )}
                         {size === `default` && (
@@ -143,12 +144,15 @@ export const VideoRowCard = ({ data, onRemove, size = `default` }: VideoRowCardP
                         )}
                         {size === `compact` && (
                             <p className="text-sm text-muted-foreground mt-0.5" >
-                                {compactViews} views • {compactLikes} likes
+                                {compactViews} views &bull; {compactLikes} likes
                             </p>
                         )}
                     </Link>
                     <div className="flex-none">
-                        <VideoMenu videoId={data.id} onRemove={onRemove} />
+                        <VideoMenu
+                            videoId={data.id}
+                            onRemove={onRemove}
+                            removeIsPending={removeIsPending} />
                     </div>
                 </div>
             </div>

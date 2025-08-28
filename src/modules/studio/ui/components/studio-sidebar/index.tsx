@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -17,6 +18,7 @@ import Image from "next/image";
 
 export const StudioSiderbar = () => {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <Sidebar collapsible="icon" className="pt-16 z-40 ">
@@ -42,6 +44,11 @@ export const StudioSiderbar = () => {
                 tooltip={"Content"}
                 asChild
                 isActive={pathname === `/studio`}
+                onClick={() => {
+                  if (isMobile) {
+                    setOpenMobile(false);
+                  }
+                }}
               >
                 <Link prefetch href={"/studio"}>
                   <VideoIcon className="size-5" />
@@ -51,7 +58,15 @@ export const StudioSiderbar = () => {
             </SidebarMenuItem>
             <Separator />
             <SidebarMenuItem>
-              <SidebarMenuButton tooltip={"Exit studio"} asChild>
+              <SidebarMenuButton
+                tooltip={"Exit studio"}
+                asChild
+                onClick={() => {
+                  if (isMobile) {
+                    setOpenMobile(false);
+                  }
+                }}
+              >
                 <Link prefetch href={"/"}>
                   <LogOutIcon className="size-5" />
                   <span className="text-sm">Exit studio</span>

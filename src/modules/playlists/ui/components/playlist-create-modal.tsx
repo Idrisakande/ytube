@@ -63,6 +63,7 @@ export const PlaylistCreateModal = ({ isOpen, onOpenChange }: PlaylistCreateModa
                                     <Input
                                         {...field}
                                         placeholder={`My favorite videos`}
+                                        className="focus-visible:ring-purple-400"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -71,16 +72,16 @@ export const PlaylistCreateModal = ({ isOpen, onOpenChange }: PlaylistCreateModa
                     />
                     <div className="flex justify-end">
                         <Button
-                            variant={"green_variant"}
+                            variant={"green"}
                             type="submit"
                             disabled={createPlaylist.isPending}
-                            className="cursor-pointer"
+                            className="cursor-pointer w-full"
                         >
                             {createPlaylist.isPending ?
-                                <div className="flex items-center justify-center gap-x-1 w-32 truncate line-clamp-1">
-                                    <Loader2Icon className="animate-spin text-green-600" />
-                                    <span>Creating {fieldName}</span>
-                                </div> :
+                                // <div className="flex items-center justify-center w-full">
+                                    <Loader2Icon className="animate-spin text-white" />
+                                // </div>
+                                 :
                                 `Create ${fieldName}`}
                         </Button>
                     </div>

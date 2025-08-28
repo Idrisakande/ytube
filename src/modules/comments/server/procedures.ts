@@ -18,11 +18,18 @@ export const commentsRouter = createTRPCRouter({
                     message: "User ID not found, sign in.",
                 });
             }
-            // Ensure video id and message are passed
-            if (!videoId || !value) {
+            // Ensure video id is passed
+            if (!videoId) {
                 throw new TRPCError({
                     code: `BAD_REQUEST`,
                     message: `Video ID or comments is not passed`
+                })
+            }
+            // Ensure message is passed
+            if (!value) {
+                throw new TRPCError({
+                    code: `BAD_REQUEST`,
+                    message: `Type comment or reply a comment`
                 })
             }
             const [existingComment] = await db.select().from(comments)

@@ -13,6 +13,16 @@ interface CommentsSectionProps {
     videoId: string
 }
 
+
+export const CommentsSection = ({ videoId }: CommentsSectionProps) => {
+    return (
+        <Suspense fallback={<CommentsSectionSkeleton />}>
+            <ErrorBoundary fallback={<p>Error...</p>}>
+                <CommentsSectionSuspense videoId={videoId} />
+            </ErrorBoundary>
+        </Suspense>
+    )
+}
 const CommentsSectionSkeleton = () => {
     return (
         <div className='flex items-center justify-center mt-6'>
@@ -30,10 +40,10 @@ const CommentsSectionSuspense = ({ videoId }: CommentsSectionProps) => {
 
     return (
         <div className="mt-6">
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-y-4 md:gap-y-6">
                 <h1 className="text-lg font-bold">{comments.pages[0].totalCount} Comments</h1>
                 <CommentForm videoId={videoId} />
-                <div className="flex flex-col gap-4 mt-4">
+                <div className="flex flex-col gap-1 mt-2">
                     {comments.pages.flatMap((page) =>
                         page.data).map((comment) => (
                             <CommentItem
@@ -50,14 +60,5 @@ const CommentsSectionSuspense = ({ videoId }: CommentsSectionProps) => {
                 </div>
             </div>
         </div>
-    )
-}
-export const CommentsSection = ({ videoId }: CommentsSectionProps) => {
-    return (
-        <Suspense fallback={<CommentsSectionSkeleton />}>
-            <ErrorBoundary fallback={<p>Error...</p>}>
-                <CommentsSectionSuspense videoId={videoId} />
-            </ErrorBoundary>
-        </Suspense>
     )
 }

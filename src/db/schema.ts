@@ -298,7 +298,16 @@ export const commentSelectSchema = createInsertSchema(comments);
 export const commentInsertSchema = createSelectSchema(comments);
 export const commentUpdateSchema = createUpdateSchema(comments);
 export const commentSchemap = commentInsertSchema.pick({ videoId: true, value: true });
-export const commentSchema = z.object({ videoId: z.string().uuid(), value: z.string(), parentId: z.string().uuid().nullish() })
+export const commentSchema = z.object({
+    videoId: z.string().uuid(),
+    value: z.string()
+        .min(1, { message: "You must type at least 1 character" })
+        .refine(
+            (val) => !/^[-_]+$/.test(val),
+            { message: "Only underscores or hyphens are not allowed" }
+        ),
+    parentId: z.string().uuid().nullish()
+})
 export const commentSchemaWithCursorLimit = z.object({
     videoId: z.string().uuid(),
     cursor: z

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 import { useState } from "react"
@@ -34,14 +35,20 @@ export const VideoDescription = ({ compactDate, compactViews, description, expan
                     {description || `No description`}
                 </p>
                 <div className="text-sm font-medium flex items-center gap-1 mt-4">
-                    {isExpanded ?
-                        <>
-                            Show more <ChevronUpIcon className="size-4" />
-                        </> :
-                        <>
-                            Show more <ChevronDownIcon className="size-4" />
-                        </>
-                    }
+                    <Button
+                        type="button"
+                        variant={`purple_secondary`}
+                        size={`sm`}
+                        className="rounded-full">
+                        {isExpanded ?
+                            <>
+                                Show less <ChevronUpIcon className="size-4" />
+                            </> :
+                            <>
+                                Show more <ChevronDownIcon className="size-4" />
+                            </>
+                        }
+                    </Button>
                 </div>
             </div>
         </div>

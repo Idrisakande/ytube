@@ -31,31 +31,39 @@ export const SearchInput = () => {
   }
 
   return (
-    <form className="flex w-full max-w-[600px]" onSubmit={handleSearch}>
+    <form
+      className="flex w-full max-w-[600px] border border-gray-200 rounded-full 
+      focus-within:border-purple-500"
+      onSubmit={handleSearch}
+    >
       <div className="relative w-full">
         <input
           value={value}
           onChange={(e) => setValue(e.target.value)}
           type="text"
           placeholder="Search"
-          className="w-full pl-4 py-2 pr-12 rounded-l-full  border focus:outline-none focus:border-green-500"
+          className="w-full pl-3 md:pl-4 py-1.5 md:py-2 pr-11 md:pr-12.5 rounded-l-full 
+          text-sm md:text-base placeholder:text-sm md:placeholder:text-base focus:outline-none"
         />
         {value && (
           <Button
             type="button"
-            variant={`ghost`}
-            size={`icon`}
+            variant="ghost"
+            size="icon"
             onClick={() => setValue("")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full"
+            className="absolute right-1.5 md:right-2 top-1/2 -translate-y-1/2 rounded-full 
+            size-8 md:size-9 cursor-pointer text-gray-500 hover:text-purple-500"
           >
-            <XIcon className="text-gray-500" />
+            <XIcon className="" />
           </Button>
         )}
       </div>
       <button
         disabled={!value.trim()}
         type="submit"
-        className="px-5 py-2.5 bg-gray-100 border border-l-0 rounded-r-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        className="px-4 md:px-5 py-2 md:py-2.5 hover:text-purple-500 bg-gray-100 hover:bg-gray-200 
+        rounded-r-full cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+      >
         <SearchIcon className="size-5" />
       </button>
     </form>

@@ -5,7 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Skeleton } from "@/components/ui/skeleton";
 import { videoFormSchema } from "@/db/schema";
 import { trpc } from "@/trpc/client";
-import { CopyCheckIcon, CopyIcon, EyeOffIcon, Globe2Icon, ImagePlusIcon, Loader2Icon, LockIcon, MoreVerticalIcon, RotateCcwIcon, SparklesIcon, TrashIcon } from "lucide-react";
+import { CopyCheckIcon, CopyIcon, Globe2Icon, ImagePlusIcon, Loader2Icon, LockIcon, MoreVerticalIcon, RotateCcwIcon, SparklesIcon, TrashIcon } from "lucide-react";
 import { Suspense, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
@@ -18,19 +18,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { VideoPlayer } from "@/modules/videos/ui/components/video-player";
 import Link from "next/link";
-import { snakeCaseToTitleCase } from "@/lib/utils";
+import { cn, snakeCaseToTitleCase } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { VIDEO_THUMBNAIL_URL_FALLBACK } from "@/modules/videos/constants";
-// import { useAppDispatch } from "@/lib/redux/redux-hooks";
-// import { UpdateOpenThumbnailModal } from "@/lib/redux/features/private/dialog-slice";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
-// import { UploadButton } from "@/lib/uploadthing";
-import { useAppDispatch, useAppSelector } from "@/lib/redux/redux-hooks";
-import { UpdateOpenThumbnailGenerateModal, UpdateOpenThumbnailUploadModal } from "@/lib/redux/features/private/dialog-drawer-slice";
 import { ThumbnailGenerateModal } from "../components/thumbnail-generate-modal";
 import { APP_URL } from "@/constant";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { DeleteModal } from "@/components/delete-modal";
 
 interface VideoFormSectionProps {
     videoId: string
@@ -106,6 +102,9 @@ const VideoFormSectionSkeleton = () => {
 const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
     const [video] = trpc.studio.getOne.useSuspenseQuery({ id: videoId });
     const [categories] = trpc.categories.getMany.useSuspenseQuery();
+    const [isOpenDeleteVideoModal, setIsOpenDeleteVideoModal] = useState<boolean>(false)
+    const [isOpenThumbnailUploadModal, setIsOpenThumbnailUploadModal] = useState<boolean>(false)
+    const [isOpenThumbnailGenerateModal, setIsOpenThumbnailGenerateModal] = useState<boolean>(false)
     const router = useRouter();
     const utils = trpc.useUtils();
     // Initialize the form with the video data
@@ -120,6 +119,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
             utils.studio.getMany.invalidate()
             utils.studio.getOne.invalidate({ id: videoId });
             toast.success("Video updated successfully");
+            setIsOpenDeleteVideoModal(false)
         },
         onError: () => {
             // Handle error, e.g., show a toast notification
@@ -170,48 +170,46 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                 toast.error(`Something went wrong`)
             }
         });
+    const [titleStatus, setTitleStatus] = useState<string | null>(null)
+    const [descriptionStatus, setDescriptionStatus] = useState<string | null>(null)
     const generateVideoTitle = trpc.videos.generateVideoTitle
         .useMutation({
             onSuccess: () => {
-                // Handle successful restore, e.g., show a toast notification or invalidate queries
-                // utils.studio.getMany.invalidate()
-                // utils.studio.getOne.invalidate({ id: videoId })
+                setTitleStatus(`Generating the title in 10 seconds...`);
                 toast.success("Background job started", { description: "This may take some time" });
+                setTimeout(async () => {
+                    // Refetch the single video data after job finishes
+                    const updatedVideo = await utils.studio.getOne.fetch({ id: videoId });
+                    if (updatedVideo) {
+                        // Reset form with fresh values from backend
+                        form.reset(updatedVideo);
+                    }
+                    setTitleStatus(null);
+                }, 9000);
             },
             onError: () => {
-                // Handle error, e.g., show a toast notification
                 toast.error(`Something went wrong`)
             }
         });
     const generateVideoDescription = trpc.videos.generateVideoDescription
         .useMutation({
             onSuccess: () => {
-                // Handle successful restore, e.g., show a toast notification or invalidate queries
-                // utils.studio.getMany.invalidate()
-                // utils.studio.getOne.invalidate({ id: videoId })
+                setDescriptionStatus(`Generating the description in 10 seconds...`);
                 toast.success("Background job started", { description: "This may take some time" });
+                setTimeout(async () => {
+                    // Refetch the single video data after job finishes
+                    const updatedVideo = await utils.studio.getOne.fetch({ id: videoId });
+                    if (updatedVideo) {
+                        // Reset form with fresh values from backend
+                        form.reset(updatedVideo);
+                    }
+                    setDescriptionStatus(null);
+                }, 9000);
             },
             onError: () => {
-                // Handle error, e.g., show a toast notification
                 toast.error(`Something went wrong`)
             }
         });
-    const isOpenThumbnailUploadModal = useAppSelector((state) => state.dialog_drawer.openThumbnailUploadModal);
-    const isOpenThumbnailGenerateModal = useAppSelector((state) => state.dialog_drawer.openThumbnailGenerateModal);
-
-    const dispatch = useAppDispatch();
-    const onOpenChangeThumbnailUpload = (isOpen: boolean) => {
-        // Reset the state or perform any cleanup if necessary
-        if (!isOpen) {
-            dispatch(UpdateOpenThumbnailUploadModal(isOpen));
-        }
-    }
-    const onOpenChangeThumbnailGenerate = (isOpen: boolean) => {
-        // Reset the state or perform any cleanup if necessary
-        if (!isOpen) {
-            dispatch(UpdateOpenThumbnailGenerateModal(isOpen));
-        }
-    }
     const revalidateVideo = trpc.videos.revaliadte.useMutation({
         onSuccess: () => {
             // Handle successful removal, e.g., show a toast notification or invalidate queries
@@ -228,8 +226,22 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
 
     return (
         <>
-            <ThumbnailUploadModal videoId={videoId} isOpen={isOpenThumbnailUploadModal} onOpenChange={onOpenChangeThumbnailUpload} />
-            <ThumbnailGenerateModal videoId={videoId} isOpen={isOpenThumbnailGenerateModal} onOpenChange={onOpenChangeThumbnailGenerate} />
+            <DeleteModal
+                isOpen={isOpenDeleteVideoModal}
+                onOpenChange={setIsOpenDeleteVideoModal}
+                title={`Delete the video`}
+                actionText="Are you sure to delete this video from studio?"
+                buttonText={`Delete`}
+                onClick={() => removedVideo.mutate({ id: video.id })}
+                isPending={removedVideo.isPending} />
+            <ThumbnailUploadModal
+                videoId={videoId}
+                isOpen={isOpenThumbnailUploadModal}
+                onOpenChange={setIsOpenThumbnailUploadModal} />
+            <ThumbnailGenerateModal
+                videoId={videoId}
+                isOpen={isOpenThumbnailGenerateModal}
+                onOpenChange={setIsOpenThumbnailGenerateModal} />
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="">
@@ -240,25 +252,59 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                         </div>
                         <div className="flex items-center gap-x-2">
                             <>
-                                <Button type="submit" className="w-fit cursor-pointer md:hidden" disabled={updateVideo.isPending || !form.formState.isDirty}>
-                                    Save
-                                </Button><Button type="submit" className="w-fit cursor-pointer hidden md:block" disabled={updateVideo.isPending || !form.formState.isDirty}>
-                                    Save changes
-                                </Button></>
+                                {/* <Button
+                                    variant={isPending || isSubscribed ? `secondary` : `default`}
 
+                                    className={cn(
+                                        isPending && `w-24 flex items-center justify-center`
+                                    )}
+                                >
+                                </Button> */}
+                                <Button
+                                    type="submit"
+                                    variant={`green`}
+                                    disabled={updateVideo.isPending || !form.formState.isDirty}
+                                    className={cn(`w-fit cursor-pointer md:hidden`,
+                                        updateVideo.isPending && `flex items-center justify-center w-16`
+                                    )}
+                                >
+                                    {updateVideo.isPending ?
+                                        <Loader2Icon className="size-4 animate-spin text-white" /> :
+                                        `Save`}
+                                </Button>
+                                <Button
+                                    type="submit"
+                                    variant={`green`}
+                                    disabled={updateVideo.isPending || !form.formState.isDirty}
+                                    className={cn(`w-fit cursor-pointer hidden md:flex`,
+                                        updateVideo.isPending && `items-center justify-center w-32`
+                                    )}
+                                >
+                                    {updateVideo.isPending ?
+                                        <Loader2Icon className="size-4 animate-spin text-white" /> :
+                                        `Save Changes`}
+                                </Button>
+                            </>
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size={"icon"}>
+                                    <Button variant="ghost" size={"icon"}
+                                        type="button"
+                                        className="bg-gray-200 cursor-pointer">
                                         <MoreVerticalIcon />
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => revalidateVideo.mutate({ id: video.id })}>
-                                        <RotateCcwIcon className="mr-2 size-4" />
+                                    <DropdownMenuItem className="cursor-pointer text-xs" 
+                                    onClick={() => revalidateVideo.mutate({ id: video.id })}>
+                                        <RotateCcwIcon className="mr-2 size-3" />
                                         Revalidate
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => removedVideo.mutate({ id: video.id })}>
-                                        <TrashIcon className="mr-2 size-4" />
+                                    <DropdownMenuItem
+                                        variant="destructive"
+                                        className="cursor-pointer text-xs"
+                                        onClick={() => setIsOpenDeleteVideoModal(true)}
+                                    >
+                                        <TrashIcon className="mr-2 size-3" />
                                         Delete
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -282,27 +328,32 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                         size={`icon`}
                                                         disabled={generateVideoTitle.isPending || !video.muxTrackId}
                                                         onClick={() => generateVideoTitle.mutate({ id: video.id })}
-                                                        className="size-5 [&_svg]:size-3 rounded-full cursor-pointer text-gray-700"
+                                                        className="size-5 [&_svg]:size-3 rounded-full cursor-pointer text-gray-700 p-2.5"
 
                                                     >
-                                                        {generateVideoTitle.isPending ? <Loader2Icon className="animate-spin" /> : <SparklesIcon />}
+                                                        {generateVideoTitle.isPending ? <Loader2Icon className="animate-spin" /> : <SparklesIcon className="" />}
                                                     </Button>
                                                 </TooltipTrigger>
                                                 <TooltipContent align="center" className="bg-black/80">
                                                     <p>Generate title with AI</p>
                                                 </TooltipContent>
                                             </Tooltip>
+                                            {titleStatus !== null && (
+                                                <span className="text-xs text-purple-600">{titleStatus}</span>
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
                                                 placeholder="Add a title to your video"
+                                                className="focus-visible:ring-purple-400"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+                            {/* Description feild */}
                             <FormField
                                 control={form.control}
                                 name="description"
@@ -318,7 +369,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                         size={`icon`}
                                                         disabled={generateVideoDescription.isPending || !video.muxTrackId}
                                                         onClick={() => generateVideoDescription.mutate({ id: video.id })}
-                                                        className={`size-5 [&_svg]:size-3 rounded-full cursor-pointer text-gray-700`}
+                                                        className={`size-5 [&_svg]:size-3 rounded-full cursor-pointer text-gray-700 p-2.5`}
 
                                                     >
                                                         {generateVideoDescription.isPending ? <Loader2Icon className="animate-spin" /> : <SparklesIcon />}
@@ -328,13 +379,16 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                     <p>Generate description with AI</p>
                                                 </TooltipContent>
                                             </Tooltip>
+                                            {descriptionStatus !== null && (
+                                                <span className="text-xs text-purple-600">{descriptionStatus}</span>
+                                            )}
                                         </FormLabel>
                                         <FormControl>
                                             <Textarea
                                                 {...field}
                                                 value={field.value || ""}
                                                 placeholder="Add a description to your video"
-                                                className="resize-none pr-10 h-44"
+                                                className="resize-none pr-10 h-44 focus-visible:ring-purple-400"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -357,7 +411,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                     className="object-cover rounded-lg"
                                                 />
                                                 <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
+                                                    <DropdownMenuTrigger asChild className="bg-black/50 hover:bg-black/60">
                                                         <Button
                                                             type="button"
                                                             size={"icon"}
@@ -367,14 +421,14 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="start" side="right">
                                                         <DropdownMenuItem
-                                                            onClick={() => dispatch(UpdateOpenThumbnailUploadModal(true))}
+                                                            onClick={() => setIsOpenThumbnailUploadModal(true)}
                                                             className="text-[0.8rem] cursor-pointer">
                                                             <ImagePlusIcon className="mr-1 size-4" />
                                                             Change
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem
                                                             disabled={true}
-                                                            onClick={() => dispatch(UpdateOpenThumbnailGenerateModal(true))}
+                                                            onClick={() => setIsOpenThumbnailGenerateModal(true)}
                                                             className="text-[0.8rem] cursor-pointer">
                                                             <SparklesIcon className="mr-1 size-4" />
                                                             AI-generated
@@ -393,6 +447,7 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                     </FormItem>
                                 )}
                             />
+                            {/* select category */}
                             <FormField
                                 control={form.control}
                                 name="categoryId"
@@ -504,10 +559,10 @@ const VideoFormSectionSuspense = ({ videoId }: VideoFormSectionProps) => {
                                                     <Globe2Icon className="size-4 mr-2" />
                                                     Public
                                                 </SelectItem>
-                                                <SelectItem value="unlisted" className="flex items-center">
+                                                {/* <SelectItem value="unlisted" className="flex items-center">
                                                     <EyeOffIcon className="size-4 mr-2" />
                                                     Unlisted
-                                                </SelectItem>
+                                                </SelectItem> */}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />

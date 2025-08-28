@@ -2,13 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  useAuth,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { useAuth, SignInButton, SignedIn, SignedOut, UserButton, } from "@clerk/nextjs";
 import { ClapperboardIcon, UserCircleIcon, UserIcon } from "lucide-react";
 
 export const AuthButton = () => {
@@ -24,10 +18,10 @@ export const AuthButton = () => {
         <SignedOut>
           <SignInButton mode="modal">
             <Button
-              variant={"outline"}
-              className="px-4 py-2 text-sm text-blue-600 hover:text-blue-500 font-medium rounded-full shadow-none border-blue-500"
+              variant={"purple_ghost"}
+              className="px-4 py-2 text-sm font-medium rounded-full shadow-none cursor-pointer"
             >
-              <UserCircleIcon />
+              <UserCircleIcon className="hidden md:block" />
               {/* <User/> */}
               Sign in
             </Button>
@@ -51,6 +45,7 @@ export const AuthButton = () => {
             </UserButton.MenuItems>
           </UserButton>
         </SignedIn>
+
       )}
     </>
   );

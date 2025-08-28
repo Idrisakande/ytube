@@ -6,6 +6,7 @@ import { VideoInfo, VideoInfoskeleton } from "@/modules/videos/ui/components/vid
 interface VideoGridCardProps {
     data: VideoGetManyOutput[`data`][number]
     onRemove?: () => void
+    removeIsPending?: boolean
 }
 export const VideoGridCardSkeleton = () => {
     return (
@@ -15,10 +16,10 @@ export const VideoGridCardSkeleton = () => {
         </div>
     )
 }
-export const VideoGridCard = ({ data, onRemove }: VideoGridCardProps) => {
+export const VideoGridCard = ({ data, onRemove, removeIsPending }: VideoGridCardProps) => {
     return (
         <div className="flex flex-col gap-2 w-full group">
-            <Link prefetch  href={`/videos/${data.id}`}>
+            <Link prefetch href={`/videos/${data.id}`}>
                 <VideoThumbnail
                     thumbnailUrl={data.thumbnailUrl}
                     previewUrl={data.previewUrl}
@@ -26,7 +27,10 @@ export const VideoGridCard = ({ data, onRemove }: VideoGridCardProps) => {
                     duration={data.duration}
                 />
             </Link>
-            <VideoInfo data={data} onRemove={onRemove} />
+            <VideoInfo
+                data={data}
+                onRemove={onRemove}
+                removeIsPending={removeIsPending} />
         </div>
     )
 }

@@ -43,7 +43,6 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
             console.log(`error from view:`, error.message)
         }
     })
-
     const handelPlay = () => {
         if (!isSignedIn) return
 

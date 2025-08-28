@@ -5,13 +5,14 @@ import { db } from "@/db"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
 
-
 export async function POST(req: Request) {
     const SIGNING_SECRET = process.env.CLERK_SIGNING_SECRET
     // const SIGNING_SECRET = process.env.CLERK_SIGNING_SECRET || ""
+    console.log(`Clause to debug 7......`);
 
     if (!SIGNING_SECRET) {
         // return new Response("SVIX_CLERK_SIGNING_SECRET is not set", { status: 500 })
+        console.error(`provide clerk signing secrect`)
         throw new Error("ERROR: SVIX_CLERK_SIGNING_SECRET is not set from clerk Dashboard to .env or .env.local")
     }
     // create new Svix instance with secret
@@ -21,17 +22,16 @@ export async function POST(req: Request) {
     const svix_id = headerPayload.get("svix-id")
     const svix_timestamp = headerPayload.get("svix-timestamp")
     const svix_signature = headerPayload.get("svix-signature")
-    // const headerPayload = await headers()
     // const svix_id = headerPayload.get("svix-id") || ""
-    // const svix_timestamp = headerPayload.get("svix-timestamp") || ""
-    // const svix_signature = headerPayload.get("svix-signature") || ""
     // if headers are not set or error out, return 400
     if (!svix_id || !svix_timestamp || !svix_signature) {
+        console.log(`svix id, timestamp, signature`)
         return new Response("Error: Missing Svix headers", { status: 400 })
     }
     // get body
     const payload = await req.json()
     const body = JSON.stringify(payload)
+    console.log(`body from clerk:${body}`)
 
     let event: WebhookEvent
     // verify the webhook
@@ -46,9 +46,8 @@ export async function POST(req: Request) {
         return new Response("Error: Verifying webhook", { status: 400 })
     }
     //  do nsomething with the event payload
-
-    // console.log("Webhook event payload", body)
     const eventType = event.type
+    console.log(`eventType:${event.type}`)
     // check if event is a user event
     if (eventType === "user.created") {
         // handle user created event
@@ -57,12 +56,14 @@ export async function POST(req: Request) {
         // or send a welcome email to the user
         // or send a notification to the user
         const { data } = event
+        console.log(`data from clerk:${data}`)
         await db.insert(users).values({
             clerkId: data.id,
             email: data.email_addresses[0].email_address,
             name: `${data.first_name} ${data.last_name}`,
             imageUrl: data.image_url,
         })
+
         console.log("User created:", event.data)
     }
     if (event.type === "user.deleted") {
@@ -77,16 +78,14 @@ export async function POST(req: Request) {
     if (eventType === "user.updated") {
         // handle user updated event
         const { data } = event
-        await db.update(users).set({
-            name: `${data.first_name} ${data.last_name}`,
-            imageUrl: data.image_url,
-        })
+        await db
+            .update(users)
+            .set({
+                name: `${data.first_name} ${data.last_name}`,
+                imageUrl: data.image_url,
+            })
+            .where(eq(users.clerkId, data.id))
         console.log("User updated:", event.data)
     }
-    // else {
-    //     console.log("Unknown event type:", event.type)
-    // }
-
-    // return 200
     return new Response("Webhook received", { status: 200 })
 }

@@ -19,5 +19,3 @@ export const HomeLayout = ({ children }: LayoutProps) => {
     </SidebarProvider>
   );
 };
-
-// "dev:server": "concurrently \"npm run dev\" \"npm run dev:webhook\"",

@@ -19,8 +19,8 @@ export const CommentReplies = ({ parentId, videoId }: CommentRepliesProps) => {
     })
 
     return (
-        <div className="pl-14">
-            <div className="flex flex-col gap-4 mt-2">
+        <div className="pl-10">
+            <div className="flex flex-col gap-4 mt-1">
                 {isLoading && (
                     <div className="flex items-center justify-center">
                         <Loader2Icon className="text-muted-foreground size-6 animate-spin" />
@@ -34,16 +34,20 @@ export const CommentReplies = ({ parentId, videoId }: CommentRepliesProps) => {
                         ))}
             </div>
             {hasNextPage && (
-                <Button
-                    variant={"green_variant"}
-                    size={"xs"}
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                    className="mt-2"
-                >
-                    <CornerDownRightIcon />
-                    Show more replies
-                </Button>
+                isFetchingNextPage ?
+                    <div className="flex items-center justify-center w-full">
+                        <Loader2Icon className="text-muted-foreground size-6 animate-spin" />
+                    </div> :
+                    <Button
+                        variant={"purple_ghost"}
+                        size={"xs"}
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        className="mt-1 cursor-pointer"
+                    >
+                        <CornerDownRightIcon />
+                        Show more replies
+                    </Button>
             )}
         </div>
     )

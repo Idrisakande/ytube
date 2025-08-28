@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { UserAvatar } from "@/components/user-avatar"
+import { cn } from "@/lib/utils"
 import { useSubscription } from "@/modules/subscription/hooks/use-subscriptions"
 import { SubscriptionButton } from "@/modules/subscription/ui/components/subscription-button"
 import { UserInfo } from "@/modules/users/ui/components/user-info"
@@ -23,9 +24,9 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
     })
 
     return (
-        <div className="min-w-0 flex gap-3 items-center sm:items-start justify-between sm:justify-start">
-            <Link prefetch  href={`/users/${user.id}`}>
-                <div className="min-w-0 flex items-center gap-3">
+        <div className="min-w-0 flex items-center sm:items-start justify-between sm:justify-start gap-3">
+            <Link prefetch href={`/users/${user.id}`}>
+                <div className="min-w-0 md:min-w-40 lg:min-w-0 flex items-center gap-3">
                     <UserAvatar size={`lg`} imageUrl={user.imageUrl} name={user.name} />
                     <div className="flex flex-col gap-y-0 min-w-0">
                         <UserInfo name={user.name} size={`lg`} />
@@ -41,7 +42,7 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
                     variant={`secondary`}
                     asChild
                     className="rounded-full">
-                    <Link prefetch 
+                    <Link prefetch
                         href={`/studio/videos/${videoId}`}
                     >Edit video
                     </Link>
@@ -50,7 +51,8 @@ export const VideoOwner = ({ user, videoId }: VideoOwnerProps) => {
                     disabled={isPending || !isLoaded}
                     isSubscribed={user.viewerSubscribed}
                     onClick={onClick}
-                    className="flex-none"
+                    className={cn(`flex-none`)}
+                    isPending={isPending}
                 />
             )}
         </div>

@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 interface VideoInfoProps {
     data: VideoGetManyOutput[`data`][number]
     onRemove?: () => void
+    removeIsPending?: boolean
 }
 export const VideoInfoskeleton = () => {
     return (
@@ -22,7 +23,7 @@ export const VideoInfoskeleton = () => {
         </div>
     )
 }
-export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
+export const VideoInfo = ({ data, onRemove, removeIsPending }: VideoInfoProps) => {
     const compactViews = useMemo(() => {
         return Intl.NumberFormat(`en`, {
             notation: "compact"
@@ -34,26 +35,29 @@ export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
 
     return (
         <div className="flex gap-2">
-            <Link prefetch  href={`/users/${data.user.id}`}>
+            <Link prefetch href={`/users/${data.user.id}`}>
                 <UserAvatar imageUrl={data.user.imageUrl} name={data.user.name} />
             </Link>
             <div className="min-w-0 flex-1">
-                <Link prefetch  href={`/videos/${data.id}`}>
+                <Link prefetch href={`/videos/${data.id}`}>
                     <h3 className="text-sm font-semibold text-gray-700 break-words line-clamp-1 lg:line-clamp-2">
                         {data.title}
                     </h3>
                 </Link>
-                <Link prefetch  href={`/users/${data.user.id}`}>
+                <Link prefetch href={`/users/${data.user.id}`}>
                     <UserInfo name={data.user.name} />
                 </Link>
-                <Link prefetch  href={`/videos/${data.id}`}>
+                <Link prefetch href={`/videos/${data.id}`}>
                     <p className="text-sm text-gray-600 line-clamp-1">
-                        {compactViews} views • {compactDate}
+                        {compactViews} views &bull; {compactDate}
                     </p>
                 </Link>
             </div>
             <div className="flex-shrink-0">
-                <VideoMenu videoId={data.id} onRemove={onRemove} />
+                <VideoMenu
+                    videoId={data.id}
+                    onRemove={onRemove}
+                    removeIsPending={removeIsPending} />
             </div>
         </div>
     )

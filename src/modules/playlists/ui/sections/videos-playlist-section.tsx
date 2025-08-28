@@ -72,7 +72,9 @@ const VideosPlaylistSectionSuspense = ({ playlistId }: VideosPlaylistSectionProp
                             <VideoGridCard
                                 key={video.id}
                                 data={video}
-                                onRemove={() => removeVideoFromPlaylist.mutate({ playlistId, videoId: video.id })} />
+                                onRemove={() => removeVideoFromPlaylist.mutate({ playlistId, videoId: video.id })}
+                                removeIsPending={removeVideoFromPlaylist.isPending}
+                            />
                         )))}
             </div>
             <div className="hidden md:flex flex-col gap-4">
@@ -83,7 +85,9 @@ const VideosPlaylistSectionSuspense = ({ playlistId }: VideosPlaylistSectionProp
                                 key={video.id}
                                 data={video}
                                 size={`compact`}
-                                onRemove={() => removeVideoFromPlaylist.mutate({ playlistId, videoId: video.id })} />
+                                onRemove={() => removeVideoFromPlaylist.mutate({ playlistId, videoId: video.id })}
+                                removeIsPending={removeVideoFromPlaylist.isPending}
+                            />
                         )))}
             </div>
             <InfiniteScroll

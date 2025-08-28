@@ -19,10 +19,10 @@ export const VideoTopRowSkeleton = () => {
             </div>
             <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3 w-[70%]">
-                    <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                    <Skeleton className="size-12 rounded-full shrink-0" />
                     <div className="flex flex-col gap-2 w-full">
-                        <Skeleton className="h-6 w-4/5 md:w-2/6" />
-                        <Skeleton className="h-6 w-3/5 md:w-1/5" />
+                        <Skeleton className="h-5 w-4/5 md:w-2/6" />
+                        <Skeleton className="h-5 w-3/5 md:w-1/5" />
                     </div>
                 </div>
                 <Skeleton className="h-9 w-2/6 md:w-1/6" />
@@ -52,7 +52,7 @@ export const VideoTopRow = ({ video }: VideoTopRowProps) => {
 
     return (
         <div className="flex flex-col gap-4 mt-4">
-            <h1 className="text-xl font-semibold">{video.title}</h1>
+            <h1 className="text-lg md:text-xl font-semibold">{video.title}</h1>
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <VideoOwner user={video.user} videoId={video.id} />
                 <div className="flex sm:justify-end gap-2 overflow-x-auto sm:overflow-visible sm:min-w-[calc(50%-6px)] -mb-2 sm:mb-0 pb-2 sm:pb-0">

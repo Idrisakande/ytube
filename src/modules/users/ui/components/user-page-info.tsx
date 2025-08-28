@@ -21,26 +21,18 @@ export const UserPageInfoSkeleton = () => {
                     <Skeleton className="h-[60px] w-[60px] rounded-full" />
                     <div className="flex-1 min-w-0">
                         <Skeleton className="h-5 w-38 mt-1" />
-                        <div className="flex items-center gap-x-1 mt-1">
-                            <Skeleton className="h-3 w-8" />
-                            <Skeleton className="size-1.5 rounded-full" />
-                            <Skeleton className="h-3 w-8" />
-                        </div>
+                        <Skeleton className="h-5 w-32 mt-1" />
                     </div>
                 </div>
-                <Skeleton className="h-8 w-full rounded-full mt-3" />
+                <Skeleton className="h-7 w-full rounded-full mt-3" />
             </div>
             {/* Desktop layout */}
             <div className="hidden md:flex items-start gap-4">
                 <Skeleton className="size-42 rounded-full" />
-                <div className="flex-1 min-w-0">
-                    <Skeleton className="h-5 w-38 mt-1" />
-                    <div className="flex items-center gap-x-1 mt-3">
-                        <Skeleton className="h-3 w-8" />
-                        <Skeleton className="size-1.5 rounded-full" />
-                        <Skeleton className="h-3 w-8" />
-                    </div>
-                    <Skeleton className="h-8 w-32 rounded-full mt-3" />
+                <div className="flex-1 flex-col min-w-0">
+                    <Skeleton className="h-6 w-48 mt-4" />
+                    <Skeleton className="h-4 w-38 mt-4" />
+                    <Skeleton className="h-5 w-34 mt-4" />
                 </div>
             </div>
         </div>
@@ -86,7 +78,7 @@ export const UserPageInfo = ({ user }: UserPageInfoProps) => {
                         variant={`secondary`}
                         className="w-full rounded-full mt-3"
                     >
-                        <Link prefetch  href={`/studio`}> Go to studio</Link>
+                        <Link prefetch href={`/studio`}> Go to studio</Link>
                     </Button>
                 ) : (
                     <SubscriptionButton
@@ -125,7 +117,7 @@ export const UserPageInfo = ({ user }: UserPageInfoProps) => {
                             variant={`secondary`}
                             className="rounded-full mt-3"
                         >
-                            <Link prefetch  href={`/studio`}> Go to studio</Link>
+                            <Link prefetch href={`/studio`}> Go to studio</Link>
                         </Button>
                     ) : (
                         <SubscriptionButton

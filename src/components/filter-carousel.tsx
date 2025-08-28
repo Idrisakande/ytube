@@ -69,16 +69,16 @@ export const FilterCarousel = ({
       {/* left fade */}
       <div
         className={cn(
-          "absolute left-12 top-0 bottom-0 w-12 z-10 bg-gradient-to-r from-white to-transparent pointer-events-none",
+          "absolute left-7 md:left-9 top-0 bottom-0 w-7 md:w-9 z-10 bg-gradient-to-r from-white to-transparent pointer-events-none",
           current === 1 ? "opacity-0" : "opacity-100"
         )}
       />
       <Carousel
         setApi={setApi}
         opts={{ align: "start", dragFree: true }}
-        className="w-full px-12"
+        className="w-full px-8 md:px-10"
       >
-        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2 z-20" />
+        <CarouselPrevious className="absolute -left-1.5 md:-left-0.5 top-1/2 -translate-y-1/2 z-20" />
 
         <CarouselContent className="-ml-3">
           {isLoading &&
@@ -118,12 +118,12 @@ export const FilterCarousel = ({
             ))}
         </CarouselContent>
 
-        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2 z-20" />
+        <CarouselNext className="absolute -right-1.5 md:-right-0.5 top-1/2 -translate-y-1/2 z-20" />
       </Carousel>
       {/* right fade */}
       <div
         className={cn(
-          "absolute right-12 top-0 bottom-0 w-12 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none",
+          "absolute right-7 md:right-10 top-0 bottom-0 w-7 md:w-10 z-10 bg-gradient-to-l from-white to-transparent pointer-events-none",
           current === count ? "opacity-0" : "opacity-100"
         )}
       />

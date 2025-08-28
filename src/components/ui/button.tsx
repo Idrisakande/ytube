@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-xs hover:bg-destructive/80 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
@@ -21,7 +21,13 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         tertiary: "bg-background hover:bg-blue-500/10 text-blue-500",
-        green_variant: "bg-background hover:bg-green-500/10 text-green-500"
+        green: "text-white bg-green-400 hover:bg-green-500 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        green_outline: "text-white bg-green-400 hover:bg-green-500 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        green_ghost: "text-green-600 disabled:text-green-700 bg-background hover:bg-green-500/10 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        purple_secondary: "text-purple-500 hover:text-purple-600 bg-background hover:bg-purple-100 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        purple_ghost: "text-purple-500 hover:text-white bg-background hover:bg-purple-500 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        purple: "text-white bg-purple-400 hover:bg-purple-600 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        purple_outline: "text-white bg-purple-400 hover:bg-purple-600 dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

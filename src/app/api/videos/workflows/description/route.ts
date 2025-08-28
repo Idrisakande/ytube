@@ -42,7 +42,7 @@ export const { POST } = serve<InputType>(async (context) => {
     // write a description prompt for the content
     const DESCRIPTION_SYSTEM_PROMPT = `Generate a summarized video base on the content of its ${transcript} that satisfy the following 
     - Be brief. Condense the content into a summary that captures the key points and main ideas without losing important details.
-    - Aim for a summary that is 3-5 sentences long and no more than 200 characters.
+    - Aim for a summary that is 4-6 sentences long and no more than 200 characters.
     - Only return the summary, no other text, annotations, or comments.
     - Focus on the most critical information, ignoring filler, repetitive statements, or irrelevant tangents.
     - Do not add quotes or any additional formatting. 
