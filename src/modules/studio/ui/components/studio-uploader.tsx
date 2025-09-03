@@ -36,6 +36,9 @@ export const StudioUploader = ({ endpoint, onUploadComplete }: StudioUploaderPro
                     <div className="flex flex-col gap-2 text-center">
                         <p className="text-sm font-semibold">Drag and drop video files to upload here</p>
                         <p className="text-xs text-muted-foreground">Your videos will be private until you publish them</p>
+                        <p className="text-xs text-green-500">You can not upload more than 30 seconds of video</p>
+
+                        {/* <p className="text-xs text-muted-foreground">Your videos will be processed and ready for viewing shortly after upload.</p> */}
                     </div>
                     <MuxUploaderFileSelect
                         muxUploader={UPLOADER_ID}
